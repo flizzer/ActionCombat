@@ -19,4 +19,7 @@ protected:
 	//an error will throw if we try to assign the wrong type value -- bhd
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	float CurrentVelocity{ 0.0f };
+
+	UFUNCTION(BlueprintCallable)
+	void UpdateVelocity();
 };
