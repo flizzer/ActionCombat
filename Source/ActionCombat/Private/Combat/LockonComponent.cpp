@@ -4,6 +4,7 @@
 #include "Combat/LockonComponent.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values for this component's properties
 ULockonComponent::ULockonComponent()
@@ -46,12 +47,14 @@ void ULockonComponent::StartLockon(float Radius)
 		IgnoreParams
 	) };
 
+
 	if (!bHasFoundTarget) { return; }
 
+	CurrentTargetActor = OutResult.GetActor();
 	Controller->SetIgnoreLookInput(true);
 	MovementComp->bOrientRotationToMovement = false;
 	MovementComp->bUseControllerDesiredRotation = true;
-	//logging if needed --bhd
+
 	// UE_LOG(
 	// 	LogTemp, Warning, TEXT("Actor Detected: %s"),
 	// 	*OutResult.GetActor()->GetName()
@@ -64,6 +67,22 @@ void ULockonComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ...
+	if (!IsValid(CurrentTargetActor)) { return; }
+
+	FVector CurrentOwnerLocation = { OwnerRef->GetActorLocation() };
+	FVector CurrentTargetActorLocation = { CurrentTargetActor->GetActorLocation() };
+
+	UE_LOG(
+		LogTemp, Warning, TEXT("CurrentTargetActor Location: %s"),
+		*CurrentTargetActor->GetActorLocation().ToString()
+	);
+
+	FRotator NewRotation { UKismetMathLibrary::FindLookAtRotation(
+		CurrentOwnerLocation,
+		 CurrentTargetActorLocation
+	)};
+
+	Controller->SetControlRotation(NewRotation);
+		
 }
 
