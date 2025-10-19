@@ -4,7 +4,9 @@
 #include "Combat/LockonComponent.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "GameFramework/SpringArmComponent.h"
 
 // Sets default values for this component's properties
 ULockonComponent::ULockonComponent()
@@ -24,6 +26,7 @@ void ULockonComponent::BeginPlay()
 	OwnerRef = GetOwner<ACharacter>();
 	Controller = GetWorld()->GetFirstPlayerController();
 	MovementComp = OwnerRef->GetCharacterMovement();
+	SpringArmComp = OwnerRef->FindComponentByClass<USpringArmComponent>();
 	
 }
 
@@ -55,6 +58,9 @@ void ULockonComponent::StartLockon(float Radius)
 	MovementComp->bOrientRotationToMovement = false;
 	MovementComp->bUseControllerDesiredRotation = true;
 
+	SpringArmComp->TargetOffset = FVector{ 0.0, 0.0, 100.0};
+	
+
 	// UE_LOG(
 	// 	LogTemp, Warning, TEXT("Actor Detected: %s"),
 	// 	*OutResult.GetActor()->GetName()
@@ -76,6 +82,8 @@ void ULockonComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 		LogTemp, Warning, TEXT("CurrentTargetActor Location: %s"),
 		*CurrentTargetActor->GetActorLocation().ToString()
 	);
+
+	CurrentTargetActorLocation.Z -= 125;
 
 	FRotator NewRotation { UKismetMathLibrary::FindLookAtRotation(
 		CurrentOwnerLocation,
