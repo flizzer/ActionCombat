@@ -6,7 +6,6 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "GameFramework/SpringArmComponent.h"
 
 // Sets default values for this component's properties
 ULockonComponent::ULockonComponent()
@@ -67,9 +66,33 @@ void ULockonComponent::StartLockon(float Radius)
 	// );
 }
 
+void ULockonComponent::EndLockon()
+{
+	CurrentTargetActor = nullptr;
+	MovementComp->bOrientRotationToMovement = true;
+	MovementComp->bUseControllerDesiredRotation = false;
+	SpringArmComp->TargetOffset = FVector::ZeroVector;
+	Controller->ResetIgnoreLookInput();
+}
+
+void ULockonComponent::ToggleLockon(float Radius)
+{
+	if (IsValid(CurrentTargetActor))
+	{
+		EndLockon();	
+	}
+	else
+	{
+		StartLockon();
+	}
+}
+
 
 // Called every frame
-void ULockonComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void ULockonComponent::TickComponent(
+	float DeltaTime,
+	ELevelTick TickType,
+	FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
