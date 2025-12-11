@@ -87,7 +87,6 @@ void ULockonComponent::ToggleLockon(float Radius)
 	}
 }
 
-
 // Called every frame
 void ULockonComponent::TickComponent(
 	float DeltaTime,
@@ -101,10 +100,19 @@ void ULockonComponent::TickComponent(
 	FVector CurrentOwnerLocation = { OwnerRef->GetActorLocation() };
 	FVector CurrentTargetActorLocation = { CurrentTargetActor->GetActorLocation() };
 
-	UE_LOG(
-		LogTemp, Warning, TEXT("CurrentTargetActor Location: %s"),
-		*CurrentTargetActor->GetActorLocation().ToString()
-	);
+	double TargetDistance{
+		FVector::Distance(CurrentOwnerLocation, CurrentTargetActorLocation)
+	};
+	if (TargetDistance >= BreakDistance)
+	{
+		EndLockon();
+		return;
+	}
+
+	// UE_LOG(
+	// 	LogTemp, Warning, TEXT("CurrentTargetActor Location: %s"),
+	// 	*CurrentTargetActor->GetActorLocation().ToString()
+	// );
 
 	CurrentTargetActorLocation.Z -= 125;
 
