@@ -17,9 +17,15 @@ class ACTIONCOMBAT_API UPlayerAnimInstance : public UAnimInstance
 protected:
 	//the {} indicates that we want explicit type conversion and that
 	//an error will throw if we try to assign the wrong type value -- bhd
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Animation)
 	float CurrentVelocity{ 0.0f };
 
 	UFUNCTION(BlueprintCallable)
 	void UpdateVelocity();
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Animation)
+	bool bIsInCombat{ false };
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Animation)
+	float CurrentDirection{ 0.0f };
 };
