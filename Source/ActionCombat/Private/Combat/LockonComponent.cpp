@@ -63,7 +63,8 @@ void ULockonComponent::StartLockon(float Radius)
 	SpringArmComp->TargetOffset = FVector{ 0.0, 0.0, 100.0};
 
 	IEnemy::Execute_OnSelect(CurrentTargetActor);
-	
+
+	OnUpdatedTargetDelegate.Broadcast(CurrentTargetActor);
 
 	// UE_LOG(
 	// 	LogTemp, Warning, TEXT("Actor Detected: %s"),
@@ -76,10 +77,14 @@ void ULockonComponent::EndLockon()
 	IEnemy::Execute_OnDeselect(CurrentTargetActor);
 
 	CurrentTargetActor = nullptr;
+
 	MovementComp->bOrientRotationToMovement = true;
 	MovementComp->bUseControllerDesiredRotation = false;
 	SpringArmComp->TargetOffset = FVector::ZeroVector;
+
 	Controller->ResetIgnoreLookInput();
+
+	OnUpdatedTargetDelegate.Broadcast(CurrentTargetActor);
 }
 
 void ULockonComponent::ToggleLockon(float Radius)
