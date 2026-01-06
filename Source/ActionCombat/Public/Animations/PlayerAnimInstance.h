@@ -18,14 +18,21 @@ protected:
 	//the {} indicates that we want explicit type conversion and that
 	//an error will throw if we try to assign the wrong type value -- bhd
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Animation)
-	float CurrentVelocity{ 0.0f };
-
-	UFUNCTION(BlueprintCallable)
-	void UpdateVelocity();
+	float CurrentSpeed{ 0.0f };
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Animation)
 	bool bIsInCombat{ false };
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Animation)
 	float CurrentDirection{ 0.0f };
+
+	UFUNCTION(BlueprintCallable)
+	void UpdateSpeed();
+
+public:
+	UFUNCTION(BlueprintCallable)
+	void HandleUpdatedTarget(AActor* NewTargetActorRef);
+
+	UFUNCTION(BlueprintCallable)
+	void UpdateDirection();
 };
