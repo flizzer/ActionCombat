@@ -2,6 +2,8 @@
 
 
 #include "Combat/TraceComponent.h"
+
+#include "DiffUtils.h"
 #include "GameFramework/Character.h"
 
 // Sets default values for this component's properties
@@ -21,7 +23,9 @@ void UTraceComponent::BeginPlay()
 	Super::BeginPlay();
 
 	SkeletalComp = GetOwner()
-		->FindComponentByClass<USkeletalMeshComponent>(); 
+		->FindComponentByClass<USkeletalMeshComponent>();
+
+	OwnerRef = GetOwner<ACharacter>();
 }
 
 
@@ -34,13 +38,48 @@ void UTraceComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	FVector EndSocketLocation{ SkeletalComp->GetSocketLocation(End) };
 	FQuat ShapeRotation{ SkeletalComp->GetSocketQuaternion(Rotation) };
 
-	UE_LOG(
-		LogTemp,
-		Warning,
-		TEXT("Start: %s - End %s - Rotation: %s"),
-		*StartSocketLocation.ToString(),
-		*EndSocketLocation.ToString(),
-		*ShapeRotation.ToString()
-	);
+	TArray<FHitResult> OutResults;
+	double WeaponDistance{
+		FVector::Distance(StartSocketLocation, EndSocketLocation)
+	};
+
+	FVector BoxHalfExtent{
+		BoxCollisionLength, BoxCollisionLength, WeaponDistance
+	};
+	BoxHalfExtent /= 2;
+	FCollisionShape Box{ FCollisionShape::MakeBox(BoxHalfExtent) };
+	
+	FCollisionQueryParams IgnoreParams{
+		FName{ TEXT("Ignore Params") },
+		false,
+		GetOwner()
+	};
+	bool bHasFoundTargets{ GetWorld()->SweepMultiByChannel(
+		OutResults,
+		StartSocketLocation,
+		EndSocketLocation,
+		ShapeRotation,
+		ECC_GameTraceChannel1,
+		Box,
+		IgnoreParams
+	) };
+
+	if (bHasFoundTargets)
+	{
+		UE_LOG(
+			LogTemp,
+			Warning,
+			TEXT("Target Found!")
+		);                                             	
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }
 
