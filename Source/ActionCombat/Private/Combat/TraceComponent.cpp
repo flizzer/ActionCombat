@@ -5,6 +5,8 @@
 
 #include "DiffUtils.h"
 #include "GameFramework/Character.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values for this component's properties
 UTraceComponent::UTraceComponent()
@@ -25,7 +27,7 @@ void UTraceComponent::BeginPlay()
 	SkeletalComp = GetOwner()
 		->FindComponentByClass<USkeletalMeshComponent>();
 
-	OwnerRef = GetOwner<ACharacter>();
+	//OwnerRef = GetOwner<ACharacter>();
 }
 
 
@@ -64,13 +66,30 @@ void UTraceComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 		IgnoreParams
 	) };
 
-	if (bHasFoundTargets)
+	if (bDebugMode)
 	{
-		UE_LOG(
-			LogTemp,
-			Warning,
-			TEXT("Target Found!")
-		);                                             	
+		//centerpoint of the box --bhd
+		FVector CenterPoint {
+			UKismetMathLibrary::VLerp(
+				StartSocketLocation, EndSocketLocation, 0.5f
+			)
+		};
+
+		UKismetSystemLibrary::DrawDebugBox(
+			GetWorld(),
+			CenterPoint,
+			Box.GetExtent(),
+			bHasFoundTargets ? FLinearColor::Green : FLinearColor::Red,
+			ShapeRotation.Rotator(),
+			1.0f,
+			2.0f
+		);
+		
+		// UE_LOG(
+		// 	LogTemp,
+		// 	Warning,
+		// 	TEXT("Target Found!")
+		// );                                             	
 	}
 	
 	
